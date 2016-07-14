@@ -1,21 +1,28 @@
 var g;
 
+
+var img = require("BMPLoader").load(atob("Qk3AAAAAAAAAAD4AAAAoAAAAIAAAACAAAAABAAEAAAAAAIIAAAASCwAAEgsAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAPAAAAAIKgAAbLIAAMNMAACFKgABCEEAAwCFAA9SEQADBbkABkBmABlKkQAWIEEABACSAAoVAgBSEEIBoSAaBgpnEgCAAgoFFGpiAAA48AIAEGwAIBACAUBUoAAAQQkAAEgKwABAAIAA8ALgAOAB0ACAAGAAAAAAAA"));
+
 function lcdInit(){
   A5.write(0); // GND
   A7.write(1); // VCC
   A6.write(0); // Turn on the backlight
-
+  
   var spi = new SPI();
   spi.setup({ sck:B1, mosi:B10 });
   // Initialise the LCD
   g = require("PCD8544").connect(spi,B13,B14,B15, function() {
     // When it's initialised, clear it and write some text
+
     g.clear();
-    g.drawString('Hello World!',0,0);
+    //g.drawString('Hello World!',0,0);
+    
+    g.drawImage(img, 10, 10);
+    
     // send the graphics to the display
     g.flip();
+    
   });
-  console.log('lcd init');
 }
 
 function uartInit(){
@@ -39,11 +46,17 @@ function onInit(){
 
 onInit();
 
+var cmd = '';
 
-Serial1.on('data', function (data) {
-  g.clear();
-  g.drawString("Recieved: " + data,0,0);
-  g.flip();
+Serial1.on('data', function (data) { 
+  console.log('Hey', JSON.stringify(data));
+  cmd += data;
+  var idx = cmd.indexOf("\r");
+  if (idx > -1) {
+    g.clear();
+    g.drawString("Received: " + cmd,0,0);
+    g.flip();
+  }
 });
 
 
