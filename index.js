@@ -114,6 +114,7 @@ function button2(e) {
   playerMe.status = STATUS.DEFAULT;
   send('A');
   redraw();
+  playSound();
 }
 
 setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
@@ -121,3 +122,13 @@ setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
 function send(data) {
   Serial1.println(data);
 }
+
+
+function playSound(){
+  analogWrite(A8, 0.5, { freq: 220.0 } );
+  setTimeout(function(){
+    digitalWrite(A8,0);
+  }, 100);
+}
+
+    
