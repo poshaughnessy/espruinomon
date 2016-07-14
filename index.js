@@ -55,7 +55,7 @@ onInit();
 Serial1.on('data', function (data) { 
   console.log('data', JSON.stringify(data));
   if (data === 'A') {
-    if (player.status === STATUS.DEFENDING) {
+    if (playerMe.status === STATUS.DEFENDING) {
       console.log('Blocked!');
     } else {      
       console.log('Been attacked!');
