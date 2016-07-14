@@ -60,9 +60,27 @@ Serial1.on('data', function (data) {
 });
 
 
+var playerMe = {
+  health: 100
+};
+
+function drawHealthMeter() {
+  var string = '';
+  for (var i=0; i < playerMe.health / 10; i++) {
+    console.log('string', string);
+    string += '*';
+  }
+  console.log('DRAW HEALTH METER');
+  g.clear();
+  g.drawString(string,0,10);
+  g.flip();
+}
+
+
 function button1(e){
   console.log('button 1');
   send();
+  drawHealthMeter();
 }
 
 setWatch( button1, B3, { repeat: true, debounce : 50, edge: "rising" });
