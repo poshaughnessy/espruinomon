@@ -120,7 +120,7 @@ function button2(e) {
 setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
 
 function send(data) {
-  Serial1.println(data);
+  Serial1.print(data);
 }
 
 
