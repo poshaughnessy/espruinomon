@@ -8,7 +8,8 @@ require("BMPLoader").load(atob("Qk3AAAAAAAAAAD4AAAAoAAAAIAAAACAAAAABAAEAAAAAAIIA
 
 var STATUS = {
   DEFAULT: 'DEFAULT',
-  DEFENDING: 'DEFENDING'
+  DEFENDING: 'DEFENDING',
+  WON: 'WON'
 };
 
 var playerMe = {
@@ -54,11 +55,19 @@ onInit();
 Serial1.on('data', function (data) { 
   console.log('data', JSON.stringify(data));
   if (data === 'A') {
-    console.log('Been attacked!');
-    playerMe.health = playerMe.health - 10;
-    playerMe.status = STATUS.DEFAULT;
+    if (player.status === STATUS.DEFENDING) {
+      console.log('Blocked!');
+    } else {      
+      console.log('Been attacked!');
+      playerMe.health = playerMe.health - 10;
+      playerMe.status = STATUS.DEFAULT;
+      redraw();
+    }
+  } else if (data === 'L') {
+    console.log('Other player lost, you won!');
+    playerMe.status = STATUS.WON;
     redraw();
-  }  
+  }
 });
 
 function drawCharacter() {
@@ -68,9 +77,16 @@ function drawCharacter() {
 
 function drawHealthMeter() {
   var string = '';
-  for (var i=0; i <= playerMe.health / 10; i++) {
-    console.log('string', string);
-    string += '*';
+  if (playerMe.status === STATUS.WON) {
+    string = 'You Won!';
+  } else if (playerMe.health > 0) {    
+    for (var i=0; i <= playerMe.health / 10; i++) {
+      console.log('string', string);
+      string += '*';
+    }
+  } else {
+    string = 'You Lost!';
+    send('L');
   }
   console.log('Draw health');
   g.drawString(string,10,40);
@@ -104,5 +120,4 @@ setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
 
 function send(data) {
   Serial1.println(data);
-  console.log('Sent: ', data);
 }
