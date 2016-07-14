@@ -15,16 +15,25 @@ function lcdInit(){
     // send the graphics to the display
     g.flip();
   });
+  console.log('lcd init');
 }
 
 function uartInit(){
   USB.setConsole();
   Serial1.setup(9600/*baud*/);
+  console.log('uart init');
+}
+
+function initButtons(){
+  pinMode(B4, "input_pulldown");
+  pinMode(B3, "input_pulldown");
+  console.log('buttons init');
 }
 
 function onInit(){
   lcdInit();
   uartInit();
+  initButtons();
 }
 
 
@@ -38,9 +47,21 @@ Serial1.on('data', function (data) {
 });
 
 
-pinMode(B4, "input_pulldown");
+function button1(e){
+  console.log('button 1');
+  send();
+}
 
-setWatch(function(e) {
+setWatch( button1, B3, { repeat: true, debounce : 50, edge: "rising" });
+
+function button2(e) {
+  console.log('button 2');
+}
+
+setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
+
+
+function send() {
   if (!g) return; // graphics not initialised yet
   g.clear();
   g.drawString('Button pressed',0,0);
@@ -49,4 +70,4 @@ setWatch(function(e) {
   Serial1.println('Hello');
   g.drawString('Hello sent',0,15);
   g.flip();
-}, B4, { repeat: true, debounce : 50, edge: "rising" });
+}
