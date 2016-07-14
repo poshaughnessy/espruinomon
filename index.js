@@ -49,38 +49,35 @@ onInit();
 var cmd = '';
 
 Serial1.on('data', function (data) { 
-  console.log('Hey', JSON.stringify(data));
+  console.log('data', JSON.stringify(data));
   cmd += data;
   var idx = cmd.indexOf("\r");
   if (idx > -1) {
-    g.clear();
-    g.drawString("Received: " + cmd,0,0);
-    g.flip();
+    console.log('recieved:', cmd);
+    processData(cmd);
+    cmd='';
   }
 });
 
 
 function button1(e){
-  console.log('button 1');
-  send();
+  console.log('button 1 pressed');
+  send('Hello');
 }
 
 setWatch( button1, B3, { repeat: true, debounce : 50, edge: "rising" });
 
 function button2(e) {
-  console.log('button 2');
+  console.log('button 2 pressed');
 }
 
 setWatch(button2, B4, { repeat: true, debounce : 50, edge: "rising" });
 
+function send(data) {
+  Serial1.println(data);
+  console.log('Sent: ', data);
+}
 
-function send() {
-  if (!g) return; // graphics not initialised yet
-  g.clear();
-  g.drawString('Button pressed',0,0);
-  // send the graphics to the display
-  g.flip();
-  Serial1.println('Hello');
-  g.drawString('Hello sent',0,15);
-  g.flip();
+function processData(data){
+  console.log('processed:',data);
 }
